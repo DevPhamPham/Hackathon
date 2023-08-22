@@ -26,6 +26,7 @@ class AuthController {
         }
       )
     );
+    
     passport.use(
       new GoogleStrategy(
         {
@@ -39,7 +40,7 @@ class AuthController {
             if (user) return done(null, user);
             const newUser = new User({
               email: profile.emails[0].value,
-              name: profile.displayName, // Thêm trường name với giá trị displayName trong đối tượng profile
+              fullName: profile.displayName, // Thêm trường name với giá trị displayName trong đối tượng profile
               password: profile.id,
             });
             newUser.save((err) => {
@@ -66,7 +67,7 @@ class AuthController {
             const newUser = new User({
               email: profile.emails[0].value,
               password: profile.id,
-              name: profile.name.givenName + ' ' + profile.name.familyName,
+              fullName: profile.name.givenName + ' ' + profile.name.familyName,
             });
             newUser.save((err) => {
               if (err) return done(err);
@@ -88,44 +89,54 @@ class AuthController {
     });
   }
 
-  postSignup(req, res) {
+  async postSignup(req, res) {
     const user = new User({
-      email: req.body.email,
-      password: req.body.password,
-      gender: req.body.gender,
-      birthday: req.body.birthday,
-      SDT: req.body.sdt,
-      name: req.body.name,
+        fullName: req.body.fullName,
+        email: req.body.email,
+        password: req.body.password,
     });
-
-    user.save((err) => {
-      if (err)
-        res.json({ code: 1, message: "Error saving user to database" })
-      else
-        res.json({ code: 0, message: "Successfully created new user" });
-    });
+    
+    const existingUser = await User.findOne({ email: req.body.email });
+    
+    if (existingUser) {
+        // Email đã tồn tại
+        return res.status(400).json({ code: 1, message: "Email đã được sử dụng" });
+    } else {
+        // Email chưa tồn tại
+        try {
+            await user.save();
+            res.status(200).json({ code: 0, message: "Đăng ký thành công" });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ code: 1, message: "Lỗi không thể đăng ký" });
+        }
+    }
   }
+
   postLogin(req, res, next) {
     passport
       .authenticate("local", (err, user, info) => {
+        // console.log(user)
+        // console.log(info)
         if (err) {
           return next(err);
         }
         if (!user) {
-          return res.json({ code: 0, message: "Đăng nhập không thành công" })
+          return res.status(400).json({ code: 1, message: "Đăng nhập không thành công" })
         }
         req.logIn(user, (err) => {
           if (err) {
             return next(err);
           }
-          return res.json({ code: 1, message: "Đăng nhập thành công" })
+          return res.status(200).json({ code: 0, message: "Đăng nhập thành công" })
         });
       })(req, res, next);
   }
+
   logout(req, res, next) {
     req.logout(() => {
-      res.redirect("/");
-    });
+      return res.status(200).json({code: 1, message: "Đăng xuất thành công" })
+    })(req,res, next);
   }
 
   authGoogle(req, res, next) {
@@ -134,16 +145,17 @@ class AuthController {
   authGoogleCallback(req, res, next) {
     passport.authenticate("google", {
       successRedirect: "/",
-      failureRedirect: "/auth/login",
+      failureRedirect: "/login",
     })(req, res, next);
   }
+
   authFacebook(req, res, next) {
     passport.authenticate("facebook", { scope: ["email"] })(req, res, next);
   }
   authFacebookCallback(req, res, next) {
     passport.authenticate("facebook", {
       successRedirect: "/",
-      failureRedirect: "/auth/login",
+      failureRedirect: "/login",
     })(req, res, next);
   }
 

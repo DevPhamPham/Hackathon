@@ -7,6 +7,9 @@ const morgan = require("morgan");
 const expressSession = require('express-session')
 const cookieSession = require('cookie-session')
 const MemoryStore = require('session-memory-store')(expressSession)
+const session = require("express-session");
+const cors = require("cors");
+const passport = require("passport");
 
 const port = 8080;
 

@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
-const Verify = require("../model/Verify");
-const usersModel = require('../model/users.model');
+const Verify = require("../models/Verify");
+const usersModel = require('../models/users.model');
 
 let transporter = nodemailer.createTransport({
   service: 'gmail',

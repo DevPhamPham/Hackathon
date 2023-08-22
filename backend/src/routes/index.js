@@ -1,4 +1,4 @@
-const apiRoute = require("./main/API.route");
+// const apiRoute = require("./main/API.route");
 const authRoute = require("./auth/auth.route");
 const connect = require("../config/db/index");
 
@@ -10,7 +10,7 @@ function router(app) {
   app.use("/auth", authRoute);
 
   //API
-  app.use("/api", apiRoute);
+  // app.use("/api", apiRoute);
 }
 
 module.exports = router;
