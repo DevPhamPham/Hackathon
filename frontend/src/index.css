@@ -12,7 +12,7 @@ body {
     @apply text-5xl font-extrabold dark:text-white;
   }
   .heading2 {
-    @apply text-4xl font-bold dark:text-white;
+    @apply dark:text-white mb-4 text-center text-2xl font-bold text-primary-700 md:mb-6 lg:text-3xl;
   }
   .heading3 {
     @apply text-3xl font-bold dark:text-white;
