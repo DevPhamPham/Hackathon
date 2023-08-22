@@ -8,12 +8,9 @@ const expressSession = require('express-session')
 const cookieSession = require('cookie-session')
 const MemoryStore = require('session-memory-store')(expressSession)
 
-// Connect database
-const db = require("./config/db");
-db.connect();
-const port = 3000;
+const port = 8080;
 
-app.use(express.urlencoded({ limit: '50mb', extended: true }));// giới hạn kích thước cho phép tối đa là 50MB
+app.use(express.urlencoded({ limit: '50mb', extended: false }));// giới hạn kích thước cho phép tối đa là 50MB
 // app.use(express.urlencoded({ extended: false }));
 app.use(express.json({ limit: '50mb' }));
 app.use(cookieParser());
@@ -25,8 +22,26 @@ app.use(
   })
 );
 
-// http logger
+// http logger 
+// development
 app.use(morgan("combined"));
+
+//cors
+app.use(
+  cors({
+    origin: "*",
+  })
+);
+// Register middleware session and passport
+app.use(
+  session({
+    secret: "phamduykhoa-52100901",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Routes Init
 const route = require("./routes/index.js");
