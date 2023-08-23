@@ -1,6 +1,7 @@
-// const apiRoute = require("./main/API.route");
+const apiRoute = require("./main/API.route");
 const authRoute = require("./auth/auth.route");
 const connect = require("../config/db/index");
+const verifyToken = require("../app/middlewares/verifyToken")
 
 function router(app) {
   // Connect database
@@ -10,7 +11,7 @@ function router(app) {
   app.use("/auth", authRoute);
 
   //API
-  //app.use("/api", apiRoute);
+  app.use("/api",verifyToken, apiRoute);
 }
 
 module.exports = router;

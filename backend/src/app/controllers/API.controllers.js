@@ -3,9 +3,8 @@ const usersModel = require("../models/User");
 
 class APIController {
   // GET /api/
-  async users(req, res) {
-    const users = await usersModel.find({});
-    res.json({ successful: true, data: users });
+  async test(req, res) {
+    return res.json({ successful: true, data: "wallet" });
   }
 }
 
