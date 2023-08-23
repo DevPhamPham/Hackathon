@@ -4,6 +4,24 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const LocalStrategy = require("passport-local").Strategy;
 require("dotenv").config();
+const jwt = require("jsonwebtoken");
+const secretKey = process.env.JWT_SECRET;
+
+function generateToken(user) {
+  
+  const payload = {
+    id: user._id,
+    fullName: user.fullName,
+  };
+  
+  const options = {
+    expiresIn: "1h", // Thời gian hết hạn của mã thông báo
+  };
+
+  // Tạo mã thông báo mới
+  const token = jwt.sign(payload, secretKey, options);
+  return token;
+}
 
 class AuthController {
   constructor() {
@@ -128,7 +146,8 @@ class AuthController {
           if (err) {
             return next(err);
           }
-          return res.status(200).json({ code: 0, message: "Đăng nhập thành công" })
+          const token = generateToken(user); 
+          return res.status(200).json({ code: 0, message: "Đăng nhập thành công", token: token });
         });
       })(req, res, next);
   }

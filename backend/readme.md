@@ -35,8 +35,9 @@ API:
     - success [status 200]:
 
     `{
-        "code": 0,
-        "message": "Đăng nhập thành công"
+    "code": 0,
+    "message": "Đăng nhập thành công",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY0ZTRmYjZhZDJmZWYyMGE5YzZlZjQ1MiIsImZ1bGxOYW1lIjoiVGh1IiwiaWF0IjoxNjkyNzg2MTg5LCJleHAiOjE2OTI3ODk3ODl9.eYAvfDmyqFk4Hdjl8lo_ajxhpyiAjNUZOG3r09cH27g"
     }`
     - fail [status 400]: 
 
