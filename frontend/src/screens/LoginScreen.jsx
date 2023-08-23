@@ -1,24 +1,56 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
+import { Spinner } from "flowbite-react";
+import { API_URL } from "../utils/Constants";
+import Alert from "../components/Alert";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState([]);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setMessage([]);
+    setIsLoading(true);
+    try {
+      fetch(`${API_URL}/auth/login `, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.code !== 0) {
+            return setMessage(data);
+          }
+          setMessage(data);
+          setTimeout(() => {
+            navigate("/");
+          }, 1500);
+        });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+      <div className="flex flex-col my-2 items-center justify-center px-6 py-8 mx-auto md:min-h-screen lg:py-0">
         <a
           href="#"
           className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
         >
           <Logo />
         </a>
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+        <div className="w-full my-2 bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Sign in to your account
@@ -68,7 +100,6 @@ const LoginScreen = () => {
                       aria-describedby="remember"
                       type="checkbox"
                       className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                      required
                     />
                   </div>
                   <div className="ml-3 text-sm">
@@ -85,7 +116,7 @@ const LoginScreen = () => {
                 </a>
               </div>
               <button type="submit" className="w-full btn-primary">
-                Sign in
+                {isLoading ? <Spinner /> : "Sign in"}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?{" "}
@@ -94,6 +125,12 @@ const LoginScreen = () => {
                 </Link>
               </p>
             </form>
+            {message.message && (
+              <Alert
+                type={message.code === 0 ? "success" : "error"}
+                message={message.message}
+              />
+            )}
             <div className="relative flex items-center justify-center">
               <span className="absolute inset-x-0 h-px bg-gray-300"></span>
               <span className="relative bg-white px-4 text-sm text-gray-400">

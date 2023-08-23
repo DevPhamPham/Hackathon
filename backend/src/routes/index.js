@@ -10,7 +10,7 @@ function router(app) {
   app.use("/auth", authRoute);
 
   //API
-  app.use("/api", apiRoute);
+  //app.use("/api", apiRoute);
 }
 
 module.exports = router;
