@@ -2,12 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const User = require("./models/User");
-const Event = require("./models/Event");
-const CharityOrganization = require("./models/CharityOrganization");
-
 const app = express();
+
 app.use(bodyParser.json());
 
 // Kết nối tới cơ sở dữ liệu MongoDB
@@ -16,7 +12,14 @@ mongoose.connect("mongodb://localhost:27017/charity-app", {
   useUnifiedTopology: true,
 });
 
-// Tạo người dùng mới
+// Model
+const User = require("./models/User");
+const Event = require("./models/Event");
+const CharityOrganization = require("./models/CharityOrganization");
+
+// API endpoints
+
+// User API
 app.post("/users", async (req, res) => {
   try {
     const newUser = await User.create(req.body);
@@ -25,17 +28,15 @@ app.post("/users", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
-// // Lấy danh sách người dùng
-// app.get("/users", async (req, res) => {
-//   try {
-//     const users = await User.find();
-//     res.status(200).json(users);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
-
+// Lấy danh sách người dùng
+app.get("/users", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // Lấy thông tin người dùng theo ID
 app.get("/users/:userId", async (req, res) => {
   try {
@@ -56,8 +57,7 @@ app.delete("/users/:userId", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-// Tạo sự kiện mới
+// Event API
 app.post("/events", async (req, res) => {
   try {
     const newEvent = await Event.create(req.body);
@@ -66,7 +66,6 @@ app.post("/events", async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 });
-
 // Lấy danh sách sự kiện
 app.get("/events", async (req, res) => {
   try {
@@ -77,7 +76,8 @@ app.get("/events", async (req, res) => {
   }
 });
 
-// Tạo tổ chức từ thiện mới
+// Charity Organization API
+// Tạo sự kiện mới
 app.post("/charity-organizations", async (req, res) => {
   try {
     const newCharityOrg = await CharityOrganization.create(req.body);
@@ -87,7 +87,7 @@ app.post("/charity-organizations", async (req, res) => {
   }
 });
 
-// Lấy danh sách tổ chức từ thiện
+// Lấy danh sách sự kiện
 app.get("/charity-organizations", async (req, res) => {
   try {
     const charityOrgs = await CharityOrganization.find();

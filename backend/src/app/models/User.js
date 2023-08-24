@@ -15,6 +15,7 @@ const bcrypt = require('bcrypt');
 
 const userSchema = new Schema({
     //require
+    idName: { type: String, required: true, unique: true },
     fullName: { type: String, required: true },
     password: { type: String, required: true, unique: true},
     email: { type: String, required: true, unique: true },
