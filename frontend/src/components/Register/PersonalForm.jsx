@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { API_URL } from "../../utils/Constants";
 import Alert from "../Alert";
 import { Spinner } from "flowbite-react";
+import { toast } from "react-toastify";
 
 const PersonalForm = () => {
   const [email, setEmail] = useState("");
@@ -40,10 +41,8 @@ const PersonalForm = () => {
           if (data.code !== 0) {
             return setMessage(data);
           }
-          setMessage(data);
-          setTimeout(() => {
-            navigate("/login");
-          }, 1500);
+          toast.success("Register successfully");
+          navigate("/login");
         });
     } catch (err) {
       console.log(err);
