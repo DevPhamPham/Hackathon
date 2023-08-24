@@ -4,6 +4,8 @@ import Logo from "../components/Logo";
 import { Spinner } from "flowbite-react";
 import { API_URL } from "../utils/Constants";
 import Alert from "../components/Alert";
+import { toast } from "react-toastify";
+import useAuthStore from "../stores/useAuthStore";
 
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
@@ -11,6 +13,7 @@ const LoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState([]);
   const navigate = useNavigate();
+  const { setToken } = useAuthStore();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -30,16 +33,25 @@ const LoginScreen = () => {
           if (data.code !== 0) {
             return setMessage(data);
           }
-          setMessage(data);
-          setTimeout(() => {
-            navigate("/");
-          }, 1500);
+          toast.success("Login successfully", {
+            autoClose: 2000,
+          });
+          localStorage.setItem("token", data.token);
+          setToken(data.token);
+          navigate("/");
         });
     } catch (err) {
       console.log(err);
     } finally {
       setIsLoading(false);
     }
+  };
+  // CORS error
+  const handleLoginWithGoogle = (e) => {
+    e.preventDefault();
+    fetch(`${API_URL}/auth/google`)
+      .then((res) => res.json())
+      .then((data) => console.log(data));
   };
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -137,7 +149,10 @@ const LoginScreen = () => {
                 Log in with social
               </span>
             </div>
-            <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-8 py-3 text-center text-xs font-semibold text-gray-800 outline-none ring-gray-300 transition duration-100 hover:bg-gray-100 focus-visible:ring active:bg-gray-200 md:text-base">
+            <button
+              onClick={(e) => handleLoginWithGoogle(e)}
+              className="flex w-full items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-8 py-3 text-center text-xs font-semibold text-gray-800 outline-none ring-gray-300 transition duration-100 hover:bg-gray-100 focus-visible:ring active:bg-gray-200 md:text-base"
+            >
               <svg
                 className="h-5 w-5 shrink-0"
                 width="24"
