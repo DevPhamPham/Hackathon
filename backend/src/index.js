@@ -30,13 +30,11 @@ app.use(
 app.use(morgan("combined"));
 
 //cors
-app.use(
-  cors({
-    origin: "*",
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: "*",
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+}));
 // Register middleware session and passport
 app.use(
   session({

@@ -159,6 +159,7 @@ class AuthController {
   }
 
   authGoogle(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
     passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
   }
   authGoogleCallback(req, res, next) {
